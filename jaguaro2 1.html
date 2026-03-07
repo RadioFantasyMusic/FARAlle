@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Fantasy Music - Black Inner Edition</title>
+    <style>
+        :root {
+            --rainbow: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            --gold-luxury: linear-gradient(to bottom, #fcf6ba 0%, #bf953f 40%, #8a6d3b 100%);
+            --gold-btn: linear-gradient(to bottom, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            --neon-blue: #00f2ff;
+        }
+
+        /* SFONDO TRASPARENTE ESTERNO */
+        body {
+            background: transparent !important;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        /* 🌟 PLAYER CON INTERNO NERO E BORDI ESTERNI TRASPARENTI 🌟 */
+        .glass-player {
+            position: relative;
+            width: 780px;
+            height: 580px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            z-index: 1;
+            background: #000; /* Nero solido interno */
+            border-radius: 35px; /* Arrotondamento per seguire i bordi */
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05); /* Leggera profondità */
+        }
+
+        /* 🌟 BORDI ARCOBALENO ESTERNI 🌟 */
+        .glass-player::before {
+            content: '';
+            position: absolute;
+            top: -6px; left: -6px; right: -6px; bottom: -6px;
+            padding: 6px;
+            background: var(--rainbow);
+            background-size: 400%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            border-radius: 40px;
+            animation: rainbow-border 10s linear infinite;
+            z-index: -1;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+        }
+
+        @keyframes rainbow-border {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .marquee-top-box {
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px;
+            z-index: 999;
+            background: rgba(255,255,255,0.05); 
+            border-radius: 10px;
+            padding: 5px 0;
+            border: 1px solid rgba(184, 134, 11, 0.2);
+        }
+
+        .fantasy-title-text {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 34px;
+            font-weight: 900;
+            background: var(--gold-luxury);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            display: inline-block;
+            max-width: 650px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .side-panel { width: 160px; display: flex; flex-direction: column; gap: 10px; z-index: 10; }
+        
+        .info-box {
+            background: rgba(255,255,255,0.08); 
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 10px;
+            color: white;
+            text-align: center;
+        }
+        .info-box h4 { margin: 0 0 4px 0; color: #fcf6ba; font-size: 9px; text-transform: uppercase; letter-spacing: 1px;}
+        .info-data { font-size: 14px; font-weight: bold;}
+
+        .gif-box img { 
+            width: 100%; 
+            border-radius: 8px; 
+            border: 1px solid rgba(0, 242, 255, 0.2);
+        }
+
+        .turntable-zone {
+            position: relative;
+            width: 380px;
+            height: 380px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #album-art {
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 40px var(--neon-blue);
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: 1s ease;
+        }
+
+        .spinning { animation: rotate-smooth 5s linear infinite; }
+        @keyframes rotate-smooth {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .tonearm {
+            position: absolute;
+            width: 70px; height: 210px;
+            right: 25px; top: 15px;
+            background: url('https://i.imgur.com/Yg6gfsY.png');
+            background-size: contain; background-repeat: no-repeat;
+            transform-origin: top center;
+            transform: rotate(-35deg);
+            transition: 0.8s;
+            z-index: 10;
+        }
+        .arm-on { transform: rotate(8deg); }
+
+        .footer-wrap {
+            position: absolute;
+            bottom: 25px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        #trackTitle {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 16px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-blue);
+            white-space: nowrap;
+        }
+
+        .controls { display: flex; gap: 15px; align-items: center; }
+
+        .btn-gold {
+            background: var(--gold-btn);
+            border: 1px solid #bf953f;
+            color: #222;
+            padding: 8px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 13px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+        }
+
+        #volRange { 
+            -webkit-appearance: none; width: 180px; height: 8px; 
+            background: var(--gold-btn); border-radius: 10px; outline: none; 
+        }
+        #volRange::-webkit-slider-thumb { 
+            -webkit-appearance: none; width: 20px; height: 20px; 
+            background: #fff; border: 2px solid #bf953f; border-radius: 50%; cursor: pointer; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-player">
+        <div class="marquee-top-box">
+            <marquee behavior="alternate" direction="left" scrollamount="4">
+                <span class="fantasy-title-text">FANTASY MUSIC</span>
+            </marquee>
+        </div>
+
+        <div class="side-panel">
+            <div class="info-box"><h4>Listeners</h4><div id="count" class="info-data" style="color:#00ff41;">00</div></div>
+            <div class="info-box"><h4>Clock</h4><div id="clock-text" class="info-data">00:00:00</div></div>
+            <div class="info-box"><h4>Date</h4><div id="date-text" style="font-size:10px;">-- --- ----</div></div>
+        </div>
+
+        <div class="turntable-zone">
+            <img id="album-art" src="https://xatimg.com/image/7MdW5PIQ8KYH.gif">
+            <div id="arm" class="tonearm"></div>
+        </div>
+
+        <div class="footer-wrap">
+            <div style="width: 450px; overflow: hidden;">
+                <marquee id="trackTitle" behavior="alternate" direction="left" scrollamount="4">RICEZIONE DATI...</marquee>
+            </div>
+            
+            <div class="controls">
+                <button id="playBtn" class="btn-gold" onclick="togglePlay()">PLAY</button>
+                <input type="range" id="volRange" min="0" max="1" step="0.01" value="0.8">
+                <button class="btn-gold" onclick="togglePlay()">STOP</button>
+            </div>
+            
+            <div style="color:#fcf6ba; font-size:9px; font-weight:bold; letter-spacing:3px;">SYSTEM ONLINE</div>
+        </div>
+
+        <div class="side-panel">
+            <div class="info-box"><h4>Artist</h4><div id="artist-name" style="font-size:10px; color:#00f2ff;">---</div></div>
+            <div class="info-box"><h4>Song</h4><div id="song-title" style="font-size:10px;">---</div></div>
+            <div class="info-box gif-box"><img src="https://xatimg.com/image/7MdW5PIQ8KYH.gif" alt="Gif"></div>
+        </div>
+    </div>
+
+<script>
+    const streamUrl = "https://sp4.server89.com:7028/radio.mp3";
+    const statsApi  = "https://sp4.server89.com:7028/stats?sid=1&json=1";
+    const audio = new Audio(streamUrl);
+    audio.crossOrigin = "anonymous";
+    
+    const albumArt = document.getElementById('album-art');
+    const arm = document.getElementById('arm');
+    const playBtn = document.getElementById('playBtn');
+
+    function togglePlay() {
+        if (audio.paused) {
+            audio.play();
+            albumArt.classList.add('spinning');
+            arm.classList.add('arm-on');
+            playBtn.innerText = "STOP";
+        } else {
+            audio.pause();
+            albumArt.classList.remove('spinning');
+            arm.classList.remove('arm-on');
+            playBtn.innerText = "PLAY";
+        }
+    }
+
+    document.getElementById('volRange').oninput = e => audio.volume = e.target.value;
+
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock-text').innerText = now.toLocaleTimeString('it-IT');
+        document.getElementById('date-text').innerText = now.toLocaleDateString('it-IT', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
+    }
+    setInterval(updateClock, 1000);
+
+    let lastSong = "";
+    let lastCover = "";
+
+    async function updateMeta() {
+        try {
+            const r = await fetch(statsApi + "&t=" + Date.now());
+            const d = await r.json();
+
+            document.getElementById('count').innerText = String(d.currentlisteners).padStart(2,'0');
+
+            if(d.songtitle && d.songtitle !== lastSong) {
+                lastSong = d.songtitle;
+                document.getElementById('trackTitle').innerText = d.songtitle.toUpperCase();
+
+                const parts = d.songtitle.split(" - ");
+                document.getElementById('artist-name').innerText = parts[0] || "Fantasy Music";
+                document.getElementById('song-title').innerText = parts[1] || parts[0];
+
+                const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(d.songtitle)}&limit=1`);
+                const j = await res.json();
+                if(j.results[0]){
+                    const newCover = j.results[0].artworkUrl100.replace("100x100","600x600");
+                    if(newCover !== lastCover){
+                        lastCover = newCover;
+                        albumArt.src = newCover;
+                    }
+                }
+            }
+        } catch(e){}
+    }
+    setInterval(updateMeta, 10000);
+    updateMeta();
+    updateClock();
+</script>
+</body>
+</html>
