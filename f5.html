@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>farfalla</title>
+ 
+<style>
+
+body{
+
+    margin:0;
+
+    overflow:hidden;
+
+}
+ 
+.petalo{
+
+    position:fixed;
+
+    width:40px;
+
+    pointer-events:none;
+
+}
+</style>
+</head>
+ 
+<body>
+ 
+<script>
+ 
+const imgPetalo = "https://xatimg.com/image/cqw3OyYIf3g3.gif";
+
+const numeroPetali = 30;
+ 
+let petali = [];
+ 
+for(let i=0;i<numeroPetali;i++){
+ 
+    let el = document.createElement("img");
+
+    el.src = imgPetalo;
+
+    el.className = "petalo";
+ 
+    let petalo = {
+
+        el: el,
+
+        x: Math.random()*window.innerWidth,
+
+        y: Math.random()*window.innerHeight,
+
+        vx: (Math.random()*2-1)*2,
+
+        vy: Math.random()*2+1,
+
+        size: 25 + Math.random()*30
+
+    };
+ 
+    el.style.width = petalo.size+"px";
+ 
+    document.body.appendChild(el);
+
+    petali.push(petalo);
+
+}
+ 
+function aggiorna(){
+ 
+    for(let i=0;i<petali.length;i++){
+ 
+        let p = petali[i];
+ 
+        p.x += p.vx;
+
+        p.y += p.vy;
+ 
+        if(p.y > window.innerHeight){
+
+            p.y = -50;
+
+            p.x = Math.random()*window.innerWidth;
+
+        }
+ 
+        if(p.x < 0 || p.x > window.innerWidth){
+
+            p.vx *= -1;
+
+        }
+ 
+        for(let j=i+1;j<petali.length;j++){
+ 
+            let p2 = petali[j];
+ 
+            let dx = p.x - p2.x;
+
+            let dy = p.y - p2.y;
+
+            let dist = Math.sqrt(dx*dx + dy*dy);
+ 
+            if(dist < (p.size/2 + p2.size/2)){
+
+                let tempX = p.vx;
+
+                let tempY = p.vy;
+ 
+                p.vx = p2.vx;
+
+                p.vy = p2.vy;
+ 
+                p2.vx = tempX;
+
+                p2.vy = tempY;
+
+            }
+
+        }
+ 
+        p.el.style.transform = `translate(${p.x}px, ${p.y}px) rotate(${p.y}deg)`;
+
+    }
+ 
+    requestAnimationFrame(aggiorna);
+
+}
+ 
+aggiorna();
+ 
+</script>
+ 
+</body>
+</html>
+ 
