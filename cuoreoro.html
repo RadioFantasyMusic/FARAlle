@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TRILLY TRIPLE - TRASPARENTE</title>
+<style>
+  /* Tutto trasparente e centrato */
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background: transparent !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* Layout a tre colonne */
+  .container {
+    display: flex;
+    flex-direction: row; /* Allinea in orizzontale */
+    justify-content: space-around; /* Distribuisce spazio tra le gif */
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+  }
+
+  .trilly-gif {
+    /* Regola la dimensione delle tre gif */
+    max-width: 30%; /* Ognuna prende circa un terzo dello schermo */
+    height: auto;
+    display: block;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    object-fit: contain;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <img src="https://xatimg.com/image/1NkMpZYWqB51.gif" class="trilly-gif" alt="Left GIF" />
+
+  <img src="https://xatimg.com/image/1NkMpZYWqB51.gif" class="trilly-gif" alt="Center GIF" />
+
+  <img src="https://xatimg.com/image/1NkMpZYWqB51.gif" class="trilly-gif" alt="Right GIF" />
+</div>
+
+</body>
+</html>
