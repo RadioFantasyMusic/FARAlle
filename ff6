@@ -1,0 +1,27 @@
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TRILLY EDITION</title>
+<style>
+  /* TRILLY CSS LOGIC 
+  */
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+      padding: 0 30px; /* Spazio aumentato per il glow di Trilly */
+ 
+<div class="container">
+  <img src="https://xatimg.com/image/gIrcqb74atVk.gif" class="side-gif left-gif" alt="Trilly Left" />
+
+</div>
+</body>
+</html>
