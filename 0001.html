@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TRILLY TRIPLE - UNITI</title>
+<style>
+  /* Trasparenza e reset totale */
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* Contenitore compatto */
+  .container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* Centra il blocco unico delle 3 GIF */
+    align-items: center;
+    background: transparent;
+    font-size: 0; /* Rimuove spazi millimetrici tra immagini */
+  }
+
+  .trilly-gif {
+    /* Regola la larghezza in base a quanto vuoi che sia grande il "tutt'uno" */
+    width: 400px; 
+    height: auto;
+    
+    display: inline-block;
+    margin: 0;      /* Rimuove spazi esterni */
+    padding: 0;     /* Rimuove spazi interni */
+    border: none;   /* Nessun bordo */
+    outline: none;
+    background: transparent;
+    object-fit: cover; /* Assicura che si incastrino bene */
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <img src="https://xatimg.com/image/nfpa5EIeckiz.gif" class="trilly-gif" alt="Left" />
+
+  <img src="https://xatimg.com/image/nfpa5EIeckiz.gif" alt="Center" />
+
+  <img src="https://xatimg.com/image/nfpa5EIeckiz.gif" class="trilly-gif" alt="Right" />
+</div>
+
+</body>
+</html>
