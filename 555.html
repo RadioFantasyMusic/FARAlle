@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TRILLY - SOLO GIF</title>
+<style>
+  /* Tutto trasparente e centrato */
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent !important; /* Forza la trasparenza */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .single-gif {
+    /* Mantiene le proporzioni originali della GIF */
+    max-width: 100%;
+    max-height: 100%;
+    display: block; /* Assicura che venga renderizzata correttamente */
+    
+    /* Pulizia totale da bordi o effetti precedenti */
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <img src="https://xatimg.com/image/oMNlFimSykuF.gif" class="single-gif" alt="GIF Animata" />
+</div>
+
+</body>
+</html>
