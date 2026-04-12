@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Fantasy Music - Super Rainbow Glow</title>
+<style>
+body {
+  margin: 0;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.container {
+  position: relative;
+  width: 1308px;
+  height: 484px;
+}
+
+@keyframes megaGlow {
+  0% { 
+    filter: drop-shadow(0 0 8px #ff0000) drop-shadow(0 0 15px #ff00ff);
+    background-position: 0% 50%;
+  }
+  33% { 
+    filter: drop-shadow(0 0 8px #00ff00) drop-shadow(0 0 15px #00ffff);
+    background-position: 100% 50%;
+  }
+  66% { 
+    filter: drop-shadow(0 0 8px #0000ff) drop-shadow(0 0 15px #ffff00);
+    background-position: 0% 50%;
+  }
+  100% { 
+    filter: drop-shadow(0 0 8px #ff0000) drop-shadow(0 0 15px #ff00ff);
+    background-position: 100% 50%;
+  }
+}
+
+.video-wrapper {
+  position: absolute;
+  width: 270px;
+  height: 484px;
+  overflow: hidden;
+  z-index: 1;
+  background: transparent;
+  border-radius: 20px;
+}
+.left { left: 0; }
+.right { right: 0; }
+
+.video-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 4px;
+  border-radius: 20px;
+  background: conic-gradient(red, orange, yellow, lime, cyan, blue, violet, red);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: rotateBorder 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotateBorder {
+  to { filter: hue-rotate(360deg); }
+}
+
+.side-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* MODIFICATO QUI: Ora accetta maiuscole e minuscole */
+.video-text {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-family: 'Arial Black', 'Trebuchet MS', sans-serif;
+  font-weight: 900;
+  text-transform: none; /* Rimosso uppercase */
+  white-space: nowrap;
+  z-index: 5;
+  background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: megaGlow 2s linear infinite;
+}
+
+.center-area {
+  position: absolute;
+  left: 280px;
+  right: 280px;
+  top: 0;
+  bottom: 0;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.center-box {
+  position: relative;
+  width: 420px;
+  max-width: 90%;
+  animation: fadeLoop 6s ease-in-out infinite;
+}
+
+.center-box img {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+}
+
+.center-title {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 55px;
+  font-family: 'Arial Black', sans-serif;
+  font-weight: 900;
+  letter-spacing: 4px;
+  background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(255,255,255,0.8));
+  text-shadow:
+    2px 2px 0px #000,
+    -1px -1px 0px #fff,
+    0 0 15px rgba(255, 0, 255, 0.7);
+  animation: megaGlow 1.5s linear infinite;
+}
+
+@keyframes fadeLoop {
+  0% { opacity: 0; transform: scale(0.8); }
+  10% { opacity: 0; }
+  40% { opacity: 1; transform: scale(1); }
+  60% { opacity: 1; transform: scale(1); }
+  90% { opacity: 0; }
+  100% { opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="video-wrapper left">
+    <video class="side-video" autoplay loop muted playsinline>
+      <source src="https://radiofantasymusic.github.io/FARAlle//celo5.mp4">
+    </video>
+    <div class="video-text">FantasyMusic</div>
+  </div>
+
+  <div class="video-wrapper right">
+    <video class="side-video" autoplay loop muted playsinline>
+      <source src="https://radiofantasymusic.github.io/FARAlle//celo5.mp4">
+    </video>
+    <div class="video-text">FantasyMusic</div>
+  </div>
+
+  <div class="center-area">
+    <div class="center-box">
+      <img src="https://xatimg.com/image/8Pz26MjfIs8f.png" alt="center">
+      <div class="center-title">Trilly</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
