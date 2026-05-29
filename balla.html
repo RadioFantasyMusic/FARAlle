@@ -1,0 +1,207 @@
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ultra Neon TRILLY Glow</title>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    overflow: hidden;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* ===== COLORE PRINCIPALE ===== */
+:root{
+--accent: #ff0055;
+--rainbow-fluo: linear-gradient(90deg,
+    var(--accent),
+    #ff5e00,
+    #e1ff00,
+    #00ff2a,
+    #00ffff,
+    #001aff,
+    #9d00ff,
+    var(--accent));
+}
+
+/* ===== BARRA PALLINI ===== */
+.top-dots {
+    position: fixed;
+    top: 72px;           /* ← Abbassato ulteriormente */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 14px;
+    z-index: 100;
+    background: rgba(0,0,0,0.5);
+    padding: 12px 25px;
+    border-radius: 50px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+.dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    box-shadow: 0 0 15px currentColor;
+}
+.dot:hover {
+    transform: scale(1.35);
+    box-shadow: 0 0 28px currentColor;
+}
+
+/* ===== VIDEO BOX ===== */
+.video-box{
+    position:fixed;
+    width: 310px;
+    height: 560px;
+    top:50%;
+    transform:translateY(-50%);
+    border-radius:22px;
+    overflow:hidden;
+    z-index:5;
+    animation:float 8s ease-in-out infinite alternate;
+}
+.left{ left:12px; }
+.right{ right:12px; }
+
+/* Bordo Glow */
+.video-box::before{
+    content:"";
+    position:absolute;
+    inset:-18px;
+    padding:18px;
+    border-radius:50px;
+    background: var(--rainbow-fluo);
+    background-size: 300% 300%;
+    animation: rainbowMove 3.5s linear infinite, pulseGlow 1.8s ease-in-out infinite;
+    filter: blur(9px) brightness(2.3) saturate(2);
+    pointer-events:none;
+    box-shadow: 0 0 45px var(--accent), 0 0 80px var(--accent);
+    z-index: 1;
+}
+
+/* Video */
+.video-box video{
+    position: relative;
+    z-index: 2;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:22px;
+}
+
+/* ===== TESTI ===== */
+.fluo-text {
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 32px;
+    font-weight: 900;
+    background: var(--rainbow-fluo);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowMove 4s linear infinite;
+    text-transform: none;           /* ← Maiuscole e minuscole normali */
+    letter-spacing: 1px;
+    z-index: 3;
+}
+
+/* ===== CENTRO ===== */
+.center-area{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    z-index:20;
+    pointer-events:none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.center-area .fluo-text {
+    font-size: 46px;
+    text-transform: none;           /* ← Maiuscole e minuscole qui */
+}
+
+.center-area img{
+    width:280px;
+    height:auto;
+    animation: superFancy 5s ease-in-out infinite alternate;
+}
+
+/* Animazioni */
+@keyframes rainbowMove{
+    0%{background-position:0% 50%}
+    100%{background-position:300% 50%}
+}
+@keyframes pulseGlow{
+    0%, 100%{filter: blur(9px) brightness(2.3) saturate(2);}
+    50%{filter: blur(12px) brightness(2.8) saturate(2.4);}
+}
+@keyframes float{
+    0%{transform:translateY(-55%) translateX(-8px) rotate(-1deg);}
+    100%{transform:translateY(-45%) translateX(8px) rotate(1deg);}
+}
+@keyframes superFancy {
+    0% { opacity: 0.8; transform: scale(0.93) rotate(-2deg); }
+    50% { opacity: 1; filter: drop-shadow(0 0 40px var(--accent)); }
+    100% { opacity: 0.9; transform: scale(1.06) rotate(2deg); }
+}
+</style>
+</head>
+<body>
+
+<div class="top-dots" id="dots"></div>
+
+<div class="video-box left">
+    <video autoplay loop muted playsinline src="https://radiofantasymusic.github.io/FARAlle/balla.mp4"></video>
+    <div class="fluo-text">FantasyMusic</div>
+</div>
+
+<div class="video-box right">
+    <video autoplay loop muted playsinline src="https://radiofantasymusic.github.io/FARAlle/balla.mp4"></video>
+    <div class="fluo-text">FantasyMusic</div>
+</div>
+
+<div class="center-area">
+    <img src="https://xatimg.com/image/K3gv1vLHTWNO.png">
+    <div class="fluo-text">Trilly</div>
+</div>
+
+<script>
+// 10 Colori
+const colors = [
+    "#00ff00", "#0066ff", "#ff0000", "#00ffff",
+    "#ff00ff", "#ffff00", "#ffffff", "#ff8800",
+    "#aa00ff", "#00ff88"
+];
+
+const dotsContainer = document.getElementById('dots');
+colors.forEach((color) => {
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    dot.style.backgroundColor = color;
+    dot.style.color = color;
+   
+    dot.addEventListener('click', () => {
+        document.documentElement.style.setProperty('--accent', color);
+        dot.style.transform = 'scale(1.7)';
+        setTimeout(() => dot.style.transform = 'scale(1)', 180);
+    });
+   
+    dotsContainer.appendChild(dot);
+});
+</script>
+</body>
+</html>
