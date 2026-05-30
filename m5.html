@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ultra Neon TRILLY Glow - Full</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    overflow: hidden;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    height: 100vh;
+    pointer-events: none;
+}
+
+:root{
+    --accent: #ff0055;
+    --rainbow-fluo: linear-gradient(90deg, #ff0055, #ff5e00, #e1ff00, #00ff2a, #00ffff, #001aff, #9d00ff, #ff0055);
+    --text-color: #ff0055;
+}
+
+/* ===== BARRA PALLINI (Base Trasparente) ===== */
+.top-dots {
+    position: fixed;
+    top: 50px; /* Modificato da 15px a 50px per abbassarle */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 9999;
+    background: transparent !important;
+    padding: 0;
+    pointer-events: auto;
+}
+
+.dot {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    /* Effetto 3D come da foto */
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent), currentColor;
+    box-shadow: 0 0 10px currentColor;
+}
+
+.dot:hover {
+    transform: scale(1.2);
+}
+
+/* ===== VIDEO BOX ===== */
+.video-box{
+    position:fixed;
+    width:280px;
+    height:520px;
+    top:50%;
+    transform:translateY(-50%);
+    border-radius:20px;
+    overflow:hidden;
+    z-index:998;
+    animation:float 8s ease-in-out infinite alternate;
+    pointer-events:none;
+}
+
+.left{ left:20px; }
+.right{ right:20px; }
+
+.video-box::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    padding:4px;
+    border-radius:20px;
+    background:var(--rainbow-fluo);
+    background-size:400% 400%;
+    animation:rainbowMove 6s linear infinite,pulse 2s ease-in-out infinite;
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+    filter:blur(3px) brightness(1.7);
+}
+
+video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:20px;
+}
+
+/* ===== TESTI ===== */
+.fluo-text{
+    font-size:32px;
+    font-weight:800;
+    color:var(--text-color);
+    text-shadow: 0 0 8px var(--text-color), 0 0 20px var(--text-color), 0 0 35px var(--text-color);
+    transition:all .4s ease;
+}
+
+.video-box .fluo-text{
+    position:absolute;
+    bottom:25px;
+    width:100%;
+    text-align:center;
+    z-index:3;
+}
+
+.center-area .fluo-text{
+    font-size:42px;
+    white-space:nowrap;
+}
+
+/* ===== CENTRO ===== */
+.center-area{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    z-index:997;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+}
+
+.center-area img{
+    width:260px;
+    height:auto;
+    animation:superFancy 5s ease-in-out infinite alternate;
+}
+
+@keyframes rainbowMove{
+    0%{background-position:0%}
+    100%{background-position:400%}
+}
+
+@keyframes float{
+    0%{transform:translateY(-55%) translateX(-10px) rotate(-1deg);}
+    100%{transform:translateY(-45%) translateX(10px) rotate(1deg);}
+}
+
+@keyframes pulse{
+    0%,100%{filter:blur(3px) brightness(1.4);}
+    50%{filter:blur(6px) brightness(2);}
+}
+
+@keyframes superFancy{
+    0%{ opacity:.5; transform:scale(.9) rotate(-2deg); }
+    50%{ opacity:1; filter:drop-shadow(0 0 25px rgba(0,255,255,.8)); }
+    100%{ opacity:.7; transform:scale(1.1) rotate(2deg); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-dots" id="dots"></div>
+
+<div class="video-box left">
+    <video autoplay loop muted playsinline src="https://radiofantasymusic.github.io/FARAlle/m5.mp4"></video>
+    <div class="fluo-text">FantasyMusic</div>
+</div>
+
+<div class="video-box right">
+    <video autoplay loop muted playsinline src="https://radiofantasymusic.github.io/FARAlle/m5.mp4"></video>
+    <div class="fluo-text">FantasyMusic</div>
+</div>
+
+<div class="center-area">
+    <img src="https://xatimg.com/image/BdE4J0dw7yiW.png">
+    <div class="fluo-text">Trilly</div>
+</div>
+
+<script>
+const colors = [
+    "#00ff00", "#0000ff", "#ff0000", "#00ffff", "#ff00ff", 
+    "#ffff00", "#ffffff", "#ff8800", "#aa00ff", "#00ff88", 
+    "#880088", "#ccff00", "#ff6666", "#00ffcc", "#ffaa00"
+]; 
+
+const dotsContainer = document.getElementById('dots');
+
+colors.forEach(color => {
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    dot.style.color = color; 
+
+    dot.addEventListener('click', () => {
+        document.documentElement.style.setProperty('--text-color', color);
+        const newGradient = `linear-gradient(90deg, ${color}, #ff5e00, #e1ff00, #00ff2a, #00ffff, #001aff, #9d00ff, ${color})`;
+        document.documentElement.style.setProperty('--rainbow-fluo', newGradient);
+        
+        dot.style.transform = 'scale(1.3)';
+        setTimeout(() => { dot.style.transform = 'scale(1)'; }, 180);
+    });
+
+    dotsContainer.appendChild(dot);
+});
+</script>
+
+</body>
+</html>
