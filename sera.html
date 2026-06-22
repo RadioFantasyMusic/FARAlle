@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>2 OFFICIAL - Smart Auto-Timer Layout</title>
+  <style>
+    body { margin: 0; background: transparent; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: Arial, sans-serif; }
+    .container { position: relative; display: flex; justify-content: space-between; align-items: center; width: 100%; height: 100vh; padding: 0 20px; box-sizing: border-box; }
+    .colonna-sx { display: flex; flex-direction: column; justify-content: center; }
+    .colonna-dx { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; }
+    .wrapper { position: relative; overflow: hidden; border-radius: 22px; width: 270px; height: 484px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    @keyframes rainbow-bg { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+    @keyframes pulsante { 0% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(1); opacity: 0.9; } }
+    .pulsing { animation: pulsante 2s ease-in-out infinite; }
+    .wrapper::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box; border: 9px solid transparent; border-radius: 22px; background: linear-gradient(90deg, #ff0000, #ffaa00, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000) border-box; -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: destination-out; mask-composite: exclude; background-size: 200%; animation: rainbow-bg 3s linear infinite; z-index: 10; pointer-events: none; }
+    .testo-arcobaleno { background: linear-gradient(90deg, #ff0055, #ffaa00, #ffff00, #00ffaa, #00aaff, #ff00ff, #ff0055); background-size: 200%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow-bg 3s linear infinite; display: inline-block; width: 100%; }
+    .left, .right { background-image: url('https://xatimg.com/image/XXui6LJEkdi0.gif'); background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .testo-dinamico-box { font-family: 'Arial Black', sans-serif; font-size: 24px; font-weight: 900; z-index: 20; line-height: 1.3; width: 90%; box-sizing: border-box; cursor: pointer; text-align: center; filter: drop-shadow(2px 2px 1px #000) drop-shadow(-2px -2px 1px #000) drop-shadow(0px 4px 6px rgba(0,0,0,0.8)); }
+    .testo-arcobaleno-reale { background: linear-gradient(90deg, #ff0055, #ffaa00, #ffff00, #00ffaa, #00aaff, #ff00ff, #ff0055); background-size: 200%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow-bg 3s linear infinite; display: block; width: 100%; }
+    .saluto-testo { font-family: 'Arial Black', sans-serif; font-size: 20px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
+    .orario-grande { font-family: 'Arial Black', sans-serif; font-size: 55px; font-weight: 900; margin-bottom: 5px; }
+    .btn-ascolta { position: absolute; top: -35px; background: rgba(0, 0, 0, 0.9); border: 2px solid #00ffff; border-radius: 8px; padding: 6px 14px; color: white; font-family: 'Arial Black', sans-serif; font-size: 12px; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0, 255, 255, 0.4); transition: all 0.3s ease; pointer-events: auto; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="colonna-sx">
+    <div class="wrapper left">
+      <div id="saluto-fisso" class="saluto-testo testo-arcobaleno">...</div>
+      <div id="orario-grande" class="orario-grande testo-arcobaleno">00:00</div>
+      <div class="data-info" style="color:#fff; text-align: center;">
+        <div id="data-estesa" style="font-weight:bold;">...</div>
+        <div id="citta-visitatore" style="color:#00ffff; font-weight:bold; width:100%; text-align:center; margin-top:5px;">Caricamento città...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="colonna-dx">
+    <button id="tasto-audio" class="btn-ascolta">OFF AUDIO</button>
+    <div class="wrapper right" onclick="gestisciClick()">
+      <div id="testo-centro-box" class="testo-dinamico-box pulsing">
+        <span class="testo-arcobaleno-reale">...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const testoCentroBox = document.getElementById('testo-centro-box');
+  const tastoAudio = document.getElementById('tasto-audio');
+  const salutoFisso = document.getElementById('saluto-fisso');
+  const orarioGrande = document.getElementById('orario-grande');
+  const dataEstesa = document.getElementById('data-estesa');
+  const cittaVisitatore = document.getElementById('citta-visitatore');
+  
+  let clickCounter = 0;
+  let testoDaLeggere = "";
+  let lastSaluto = "";
+
+  function rilevaCitta() {
+    fetch('https://get.geojs.io/v1/ip/geo.json')
+      .then(r => r.json()).then(data => {
+        cittaVisitatore.innerText = data.city ? (data.city + ", " + data.country) : "Ospite Online";
+      }).catch(() => cittaVisitatore.innerText = "Ospite Online");
+  }
+
+  function parla() {
+    if ('speechSynthesis' in window && testoDaLeggere) {
+      window.speechSynthesis.cancel();
+      const msg = new SpeechSynthesisUtterance(testoDaLeggere);
+      msg.lang = 'it-IT';
+      window.speechSynthesis.speak(msg);
+    }
+  }
+
+  function gestisciClick() {
+    clickCounter++;
+    parla();
+    if (clickCounter >= 3) {
+      testoCentroBox.style.display = 'none';
+    }
+  }
+
+  tastoAudio.addEventListener('click', (e) => { e.stopPropagation(); gestisciClick(); });
+
+  function updateData() {
+    const now = new Date();
+    const hour = now.getHours();
+    
+    orarioGrande.innerText = now.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'});
+    dataEstesa.innerText = now.toLocaleDateString('it-IT', { weekday: 'long', month: 'long', day: 'numeric' });
+
+    let saluto = (hour >= 10 && hour < 14) ? "Interagisci" : (hour >= 14 && hour < 19) ? "Buon pomeriggio" : (hour >= 19 && hour < 24) ? "Grazie" : "Fantasy Music";
+    let testoVisivo = (hour >= 10 && hour < 14) ? "Buon Pomeriggio" : (hour >= 14 && hour < 19) ? "Fantasy Music vi augura buon pomeriggio" : (hour >= 19 && hour < 24) ? "Fantasticamente insieme !!!" : "Benvenuti la radio che fa la differenza";
+    
+    if (saluto !== lastSaluto) {
+      salutoFisso.innerText = saluto.toUpperCase();
+      testoDaLeggere = testoVisivo;
+      testoCentroBox.innerHTML = `<span class="testo-arcobaleno-reale">${testoVisivo}</span>`;
+      testoCentroBox.style.display = 'flex';
+      clickCounter = 0;
+      lastSaluto = saluto;
+    }
+  }
+
+  rilevaCitta();
+  setInterval(updateData, 1000);
+  updateData();
+</script>
+</body>
+</html>
