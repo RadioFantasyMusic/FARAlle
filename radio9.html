@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>2 OFFICIAL - Voice Smart Layout</title>
+
+<style>
+
+body{
+margin:0;
+height:100vh;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+background:transparent;
+font-family:Arial,sans-serif;
+}
+
+.container{
+width:100%;
+height:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px;
+box-sizing:border-box;
+}
+
+.colonna-sx,
+.colonna-dx{
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.wrapper{
+width:270px;
+height:484px;
+position:relative;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+border-radius:22px;
+box-shadow: 0 12px 40px rgba(0,0,0,.8);
+background: black;
+}
+
+/* Video o GIF di sfondo */
+.bg-media {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+object-fit: cover;
+z-index: 1;
+pointer-events: none;
+}
+
+/* Contenuto sopra al video */
+.wrapper > div {
+position: relative;
+z-index: 2;
+}
+
+.wrapper::after{
+content:"";
+position:absolute;
+inset:0;
+border-radius:22px;
+padding:8px;
+background:
+linear-gradient(
+90deg,
+red,
+orange,
+yellow,
+lime,
+cyan,
+blue,
+magenta,
+red
+);
+background-size:300%;
+animation:rainbow 4s linear infinite;
+-webkit-mask:
+linear-gradient(#fff 0 0) content-box,
+linear-gradient(#fff 0 0);
+-webkit-mask-composite:xor;
+mask-composite:exclude;
+pointer-events:none;
+z-index: 3;
+}
+
+@keyframes rainbow{
+0%{background-position:0%}
+100%{background-position:300%}
+}
+
+@keyframes pulse{
+0%{transform:scale(1)}
+50%{transform:scale(1.03)}
+100%{transform:scale(1)}
+}
+
+.testo{
+font-weight:900;
+text-align:center;
+background:
+linear-gradient(
+90deg,
+#ff0066,
+#ffaa00,
+#ffff00,
+#00ff88,
+#0099ff,
+#ff00ff
+);
+background-size:300%;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:
+rainbow 4s linear infinite;
+filter:
+drop-shadow(2px 2px 1px black);
+}
+
+.saluto{
+font-size:24px;
+margin-bottom:5px;
+}
+
+.orario{
+font-size:54px;
+line-height: 1;
+margin-bottom: 10px;
+}
+
+.data{
+font-size:16px;
+color:white;
+text-shadow:1px 1px 3px black;
+font-weight: bold;
+text-transform: capitalize;
+margin-bottom: 15px;
+}
+
+/* Sezione Meteo */
+.meteo-container {
+display: flex;
+flex-direction: column;
+align-items: center;
+color: white;
+text-shadow: 1px 1px 3px black;
+margin-top: 10px;
+z-index: 2;
+}
+
+.meteo-icona {
+font-size: 32px;
+animation: pulse 2s infinite;
+}
+
+.meteo-info {
+font-size: 14px;
+font-weight: bold;
+margin-top: 2px;
+text-align: center;
+width: 90%;
+}
+
+#testo-centro{
+font-size:26px;
+width:90%;
+cursor:pointer;
+animation:
+pulse 2s infinite;
+}
+
+#info-voce{
+font-size:11px;
+color:white;
+margin-top:20px;
+opacity:.7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="colonna-sx">
+    <div class="wrapper">
+      <video class="bg-media" autoplay loop muted playsinline>
+        <source src="https://i.imgur.com/NlQtyuX.mp4">
+      </video>
+
+      <div class="saluto testo">BENVENUTI</div>
+      <div id="clock" class="orario testo">00:00</div>
+      <div id="date" class="data">Caricamento...</div>
+      
+      <div class="meteo-container">
+        <div id="meteo-icon" class="meteo-icona">⏳</div>
+        <div id="meteo-text" class="meteo-info">Rilevamento posizione...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="colonna-dx">
+    <div class="wrapper" id="voiceBox">
+      <video class="bg-media" autoplay loop muted playsinline>
+        <source src="https://i.imgur.com/NlQtyuX.mp4">
+      </video>
+
+      <div id="testo-centro" class="testo">CLICCA QUI</div>
+      <div id="info-voce">In attesa di interazione...</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+const clock = document.getElementById("clock");
+const date = document.getElementById("date");
+const voiceInfo = document.getElementById("info-voce");
+const textBox = document.getElementById("testo-centro");
+const meteoIcon = document.getElementById("meteo-icon");
+const meteoText = document.getElementById("meteo-text");
+
+let voce = null;
+let testo = "";
+let lettura = false;
+let benvenutoEseguito = false;
+
+function aggiornaOra(){
+  const now = new Date();
+  clock.innerText = now.toLocaleTimeString("it-IT", {hour:"2-digit", minute:"2-digit"});
+  
+  date.innerText = now.toLocaleDateString("it-IT", {
+    weekday:"long", 
+    day:"numeric", 
+    month:"long",
+    year:"numeric"
+  });
+
+  const h = now.getHours();
+  if(h>=10 && h<14){
+    testo = "Oggi sono felice ho fatto tutto";
+  }
+  else if(h>=14 && h<19){
+    testo = "Fantasy Music vi augura un buon pomeriggio";
+  }
+  else{
+    testo = "Benvenuti nella radio che fa la differenza";
+  }
+}
+
+// METEO REALE TRAMITE GEOLOCALIZZAZIONE
+function ottieniMeteoReale() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+          .then(response => response.json())
+          .then(data => {
+            const temp = Math.round(data.current_weather.temperature);
+            const code = data.current_weather.weathercode;
+            interpretaMeteoCode(code, temp);
+          })
+          .catch(() => {
+            meteoText.innerText = "Meteo non disponibile";
+            meteoIcon.innerText = "❌";
+          });
+      },
+      () => {
+        meteoText.innerText = "Abilita la posizione";
+        meteoIcon.innerText = "📍";
+      }
+    );
+  } else {
+    meteoText.innerText = "Geo non supportata";
+  }
+}
+
+// Mappatura codici meteo WMO in icone e testi italiani
+function interpretaMeteoCode(code, temp) {
+  let icon = "☀️";
+  let desc = "Sereno";
+  
+  if (code === 0) { icon = "☀️"; desc = "Sereno"; }
+  else if ([1, 2, 3].includes(code)) { icon = "⛅"; desc = "Poco Nuvoloso"; }
+  else if ([45, 48].includes(code)) { icon = "🌫️"; desc = "Nebbia"; }
+  else if ([51, 53, 55, 61, 63, 65].includes(code)) { icon = "🌧️"; desc = "Pioggia"; }
+  else if ([71, 73, 75, 77, 85, 86].includes(code)) { icon = "❄️"; desc = "Neve"; }
+  else if ([80, 81, 82].includes(code)) { icon = "🌦️"; desc = "Rovesci"; }
+  else if (code >= 95) { icon = "⛈️"; desc = "Temporale"; }
+
+  meteoIcon.innerText = icon;
+  meteoText.innerText = `${desc} • ${temp}°C`;
+}
+
+function caricaVoce(){
+  if(!("speechSynthesis" in window)){
+    voiceInfo.innerText = "Voce non supportata";
+    return;
+  }
+  const voci = speechSynthesis.getVoices();
+  
+  // Cerchiamo una voce Google o italiana valida
+  voce = voci.find(v=> v.lang.includes("it") && /google|female|alice|elsa/i.test(v.name))
+  || voci.find(v=> v.lang.includes("it"))
+  || voci[0];
+
+  if(voce) {
+    voiceInfo.innerText = "Voce pronta: " + voce.name;
+  }
+}
+
+// Ottimizzazione eventi di caricamento voci browser
+if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = caricaVoce;
+}
+
+window.onload = () => {
+  caricaVoce();
+  aggiornaOra();
+  ottieniMeteoReale();
+};
+
+function parla(frase){
+  return new Promise(done=>{
+    speechSynthesis.cancel(); // Resetta code audio bloccate
+    const u = new SpeechSynthesisUtterance();
+    u.text = frase;
+    u.voice = voce;
+    u.lang = "it-IT";
+    u.rate = 0.95;
+    u.pitch = 1.05;
+    u.volume = 1;
+    
+    u.onend = ()=>done();
+    u.onerror = ()=>done();
+    
+    speechSynthesis.speak(u);
+    
+    // Fix specifico per bug di blocco sui browser Google
+    if (speechSynthesis.paused) {
+      speechSynthesis.resume();
+    }
+  });
+}
+
+async function eseguiBenvenutoIniziale() {
+  if(benvenutoEseguito) return;
+  benvenutoEseguito = true;
+  caricaVoce(); // Forza ricaricamento voci al momento del click se non pronte prima
+  await pausa(500);
+  await parla("Benvenuti su Voice Smart Layout. Clicca sul box di destra per ascoltare i messaggi orari.");
+}
+
+async function letturaTripla(){
+  if(lettura) return;
+  lettura = true;
+  textBox.innerHTML = testo;
+
+  await parla(testo);
+  await pausa(600);
+  await parla(testo);
+  await pausa(600);
+  await parla(testo);
+
+  setTimeout(()=>{
+    textBox.innerHTML = "CLICCA QUI";
+    lettura = false;
+  },1000);
+}
+
+function pausa(ms){
+  return new Promise(r=> setTimeout(r, ms));
+}
+
+// Attivazione globale al click del box destro (Risolve il blocco audio di Google)
+document.getElementById("voiceBox").addEventListener("click", () => {
+  // Sblocca il contesto audio su Google
+  if (typeof speechSynthesis !== 'undefined' && speechSynthesis.paused) {
+    speechSynthesis.resume();
+  }
+  
+  if(!benvenutoEseguito) {
+    eseguiBenvenutoIniziale().then(letturaTripla);
+  } else {
+    letturaTripla();
+  }
+});
+
+// Listener di riserva su tutta la pagina per massima compatibilità mobile/desktop
+document.body.addEventListener("click", () => {
+  if(!benvenutoEseguito) {
+    eseguiBenvenutoIniziale();
+  }
+}, { once: true });
+
+setInterval(aggiornaOra, 1000);
+// Aggiorna il meteo reale ogni 15 minuti automaticamente
+setInterval(ottieniMeteoReale, 900000);
+
+</script>
+
+</body>
+</html>
