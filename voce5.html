@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>2 OFFICIAL - Voice Smart Layout</title>
+
+<style>
+
+body{
+margin:0;
+height:100vh;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+background:transparent;
+font-family:Arial,sans-serif;
+}
+
+.container{
+width:100%;
+height:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px;
+box-sizing:border-box;
+}
+
+.colonna-sx,
+.colonna-dx{
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.wrapper{
+width:270px;
+height:484px;
+position:relative;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+border-radius:22px;
+box-shadow: 0 12px 40px rgba(0,0,0,.8);
+background: black;
+}
+
+/* Video o GIF di sfondo */
+.bg-media {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+object-fit: cover;
+z-index: 1;
+pointer-events: none;
+}
+
+/* Contenuto sopra al video */
+.wrapper > div {
+position: relative;
+z-index: 2;
+}
+
+.wrapper::after{
+content:"";
+position:absolute;
+inset:0;
+border-radius:22px;
+padding:8px;
+background:
+linear-gradient(
+90deg,
+red,
+orange,
+yellow,
+lime,
+cyan,
+blue,
+magenta,
+red
+);
+background-size:300%;
+animation:rainbow 4s linear infinite;
+-webkit-mask:
+linear-gradient(#fff 0 0) content-box,
+linear-gradient(#fff 0 0);
+-webkit-mask-composite:xor;
+mask-composite:exclude;
+pointer-events:none;
+z-index: 3;
+}
+
+@keyframes rainbow{
+0%{background-position:0%}
+100%{background-position:300%}
+}
+
+@keyframes pulse{
+0%{transform:scale(1)}
+50%{transform:scale(1.03)}
+100%{transform:scale(1)}
+}
+
+.testo{
+font-weight:900;
+text-align:center;
+background:
+linear-gradient(
+90deg,
+#ff0066,
+#ffaa00,
+#ffff00,
+#00ff88,
+#0099ff,
+#ff00ff
+);
+background-size:300%;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:
+rainbow 4s linear infinite;
+filter:
+drop-shadow(2px 2px 1px black);
+}
+
+.saluto{
+font-size:24px;
+margin-bottom:5px;
+}
+
+.orario{
+font-size:54px;
+line-height: 1;
+margin-bottom: 10px;
+}
+
+.data{
+font-size:16px;
+color:white;
+text-shadow:1px 1px 3px black;
+font-weight: bold;
+text-transform: capitalize;
+margin-bottom: 15px;
+}
+
+/* Sezione Meteo */
+.meteo-container {
+display: flex;
+flex-direction: column;
+align-items: center;
+color: white;
+text-shadow: 1px 1px 3px black;
+margin-top: 10px;
+}
+
+.meteo-icona {
+font-size: 32px;
+animation: pulse 2s infinite;
+}
+
+.meteo-info {
+font-size: 14px;
+font-weight: bold;
+margin-top: 2px;
+}
+
+#testo-centro{
+font-size:26px;
+width:90%;
+cursor:pointer;
+animation:
+pulse 2s infinite;
+}
+
+#info-voce{
+font-size:11px;
+color:white;
+margin-top:20px;
+opacity:.7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- COLONNA SINISTRA: ORA, DATARIO, METEO -->
+  <div class="colonna-sx">
+    <div class="wrapper">
+      <video class="bg-media" autoplay loop muted playsinline>
+        <source src="https://i.imgur.com/PRHcCna.mp4">
+      </video>
+
+      <div class="saluto testo">BENVENUTI</div>
+      <div id="clock" class="orario testo">00:00</div>
+      <div id="date" class="data">Caricamento...</div>
+      
+      <!-- Blocco Meteo Odierno -->
+      <div class="meteo-container">
+        <div id="meteo-icon" class="meteo-icona">☀️</div>
+        <div id="meteo-text" class="meteo-info">Soleggiato • 24°C</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLONNA DESTRA: VOCE DI BENVENUTO E LETTURA -->
+  <div class="colonna-dx">
+    <div class="wrapper" id="voiceBox">
+      <video class="bg-media" autoplay loop muted playsinline>
+        <source src="https://i.imgur.com/PRHcCna.mp4">
+      </video>
+
+      <div id="testo-centro" class="testo">CLICCA QUI</div>
+      <div id="info-voce">Caricamento voce...</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+const clock = document.getElementById("clock");
+const date = document.getElementById("date");
+const voiceInfo = document.getElementById("info-voce");
+const textBox = document.getElementById("testo-centro");
+const meteoIcon = document.getElementById("meteo-icon");
+const meteoText = document.getElementById("meteo-text");
+
+let voce = null;
+let testo = "";
+let lettura = false;
+let benvenutoEseguito = false;
+
+function aggiornaOra(){
+  const now = new Date();
+  clock.innerText = now.toLocaleTimeString("it-IT", {hour:"2-digit", minute:"2-digit"});
+  
+  // Datario completo italiano
+  date.innerText = now.toLocaleDateString("it-IT", {
+    weekday:"long", 
+    day:"numeric", 
+    month:"long",
+    year:"numeric"
+  });
+
+  const h = now.getHours();
+  if(h>=10&&h<14){
+    testo = "Oggi sono felice ";
+  }
+  else if(h>=14&&h<19){
+    testo = "Fantasy Music vi augura un buon pomeriggio";
+  }
+  else{
+    testo = "Benvenuti nella radio che fa la differenza";
+  }
+}
+
+// Funzione simulata per il meteo (può essere interfacciata con API meteo reali)
+function aggiornaMeteo(){
+  const h = new Date().getHours();
+  if(h >= 6 && h < 18) {
+    meteoIcon.innerText = "☀️";
+    meteoText.innerText = "Soleggiato • 26°C";
+  } else {
+    meteoIcon.innerText = "🌙";
+    meteoText.innerText = "Sereno • 18°C";
+  }
+}
+
+function caricaVoce(){
+  if(!("speechSynthesis" in window)){
+    voiceInfo.innerText = "Voce non supportata";
+    return;
+  }
+  const voci = speechSynthesis.getVoices();
+  if(!voci.length){
+    setTimeout(caricaVoce, 400);
+    return;
+  }
+  voce = voci.find(v=> v.lang.includes("it") && /google|female|alice|elsa/i.test(v.name))
+  || voci.find(v=> v.lang.includes("it"))
+  || voci[0];
+
+  voiceInfo.innerText = "Voce attiva: " + voce.name;
+  
+  // Tenta il benvenuto automatico appena la voce è pronta
+  eseguiBenvenutoIniziale();
+}
+
+window.speechSynthesis.onvoiceschanged = caricaVoce;
+window.onload = () => {
+  caricaVoce();
+  aggiornaOra();
+  aggiornaMeteo();
+};
+
+function parla(frase){
+  return new Promise(done=>{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance();
+    u.text = frase;
+    u.voice = voce;
+    u.lang = "it-IT";
+    u.rate = 0.95;
+    u.pitch = 1.05;
+    u.volume = 1;
+    u.onend = ()=>done();
+    u.onerror = ()=>done();
+    speechSynthesis.speak(u);
+    setTimeout(()=>{
+      speechSynthesis.resume();
+    },200);
+  });
+}
+
+// Benvenuto vocale automatico all'avvio
+async function eseguiBenvenutoIniziale() {
+  if(benvenutoEseguito) return;
+  benvenutoEseguito = true;
+  // Piccolo delay per stabilità
+  await pausa(1000);
+  await parla("Benvenuti su Voice Smart Layout. Clicca sul box di destra per ascoltare i messaggi orari.");
+}
+
+async function letturaTripla(){
+  if(lettura) return;
+  lettura = true;
+  textBox.innerHTML = testo;
+
+  await parla(testo);
+  await pausa(600);
+  await parla(testo);
+  await pausa(600);
+  await parla(testo);
+
+  setTimeout(()=>{
+    textBox.innerHTML = "CLICCA QUI";
+    lettura = false;
+  },1000);
+}
+
+function pausa(ms){
+  return new Promise(r=> setTimeout(r, ms));
+}
+
+// Sblocca l'audio e avvia le funzioni al click del box di destra
+document.getElementById("voiceBox").addEventListener("click", () => {
+  if(!benvenutoEseguito) {
+    eseguiBenvenutoIniziale().then(letturaTripla);
+  } else {
+    letturaTripla();
+  }
+});
+
+// Attiva l'ascolto anche su un click generico sulla pagina per aggirare i blocchi browser
+document.body.addEventListener("click", () => {
+  if(!benvenutoEseguito) {
+    eseguiBenvenutoIniziale();
+  }
+}, { once: true });
+
+setInterval(aggiornaOra, 1000);
+setInterval(aggiornaMeteo, 60000);
+
+</script>
+
+</body>
+</html>
