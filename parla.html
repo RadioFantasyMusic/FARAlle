@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>2 OFFICIAL - Smart Auto-Timer Layout</title>
+  <style>
+    body { margin: 0; background: transparent; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: Arial, sans-serif; }
+    .container { position: relative; display: flex; justify-content: space-between; align-items: center; width: 100%; height: 100vh; padding: 0 20px; box-sizing: border-box; }
+    .colonna-sx { display: flex; flex-direction: column; justify-content: center; }
+    .colonna-dx { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; }
+    .wrapper { position: relative; overflow: hidden; border-radius: 22px; width: 270px; height: 484px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    @keyframes rainbow-bg { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+    @keyframes pulsante { 0% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(1); opacity: 0.9; } }
+    .pulsing { animation: pulsante 2s ease-in-out infinite; }
+    .wrapper::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box; border: 9px solid transparent; border-radius: 22px; background: linear-gradient(90deg, #ff0000, #ffaa00, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000) border-box; -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: destination-out; mask-composite: exclude; background-size: 200%; animation: rainbow-bg 3s linear infinite; z-index: 10; pointer-events: none; }
+    .left, .right { background-image: url('https://xatimg.com/image/XXui6LJEkdi0.gif'); background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .testo-dinamico-box { font-family: 'Arial Black', sans-serif; font-size: 24px; font-weight: 900; z-index: 20; line-height: 1.3; width: 90%; box-sizing: border-box; cursor: pointer; text-align: center; filter: drop-shadow(2px 2px 1px #000) drop-shadow(-2px -2px 1px #000); }
+    .testo-arcobaleno-reale { background: linear-gradient(90deg, #ff0055, #ffaa00, #ffff00, #00ffaa, #00aaff, #ff00ff, #ff0055); background-size: 200%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow-bg 3s linear infinite; }
+    .saluto-testo { font-family: 'Arial Black', sans-serif; font-size: 22px; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; }
+    .orario-grande { font-family: 'Arial Black', sans-serif; font-size: 50px; font-weight: 900; margin-bottom: 5px; }
+    .data-estesa { font-size: 16px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="colonna-sx">
+    <div class="wrapper left">
+      <div class="saluto-testo testo-arcobaleno-reale">BENVENUTI</div>
+      <div id="orario-grande" class="orario-grande testo-arcobaleno-reale">00:00</div>
+      <div id="data-estesa" class="data-estesa">Caricamento data...</div>
+      <div id="citta-visitatore" style="color:#00ffff; margin-top:10px; font-size:12px;"></div>
+    </div>
+  </div>
+
+  <div class="colonna-dx">
+    <div class="wrapper right" onclick="attivaLetturaTripla()">
+      <div id="testo-centro-box" class="testo-dinamico-box pulsing"></div>
+      <div id="info-voce" style="font-size:10px; color:white; margin-top:20px; opacity:0.5;">Caricando voce...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const testoCentroBox = document.getElementById('testo-centro-box');
+  const infoVoce = document.getElementById('info-voce');
+  let testoCorrente = "";
+  let voceScelta = null;
+  
+  // Array per memorizzare i timer ed evitare sovrapposizioni se l'utente clicca più volte
+  let letturaTimers = [];
+
+  function selezionaVoce() {
+    if (typeof window.speechSynthesis === 'undefined') return null;
+    const voci = window.speechSynthesis.getVoices();
+    if (voci.length === 0) return null;
+    
+    // Cerca preferibilmente una voce femminile italiana fluida, altrimenti la prima italiana disponibile
+    const target = voci.find(v => v.lang.startsWith('it') && (v.name.match(/alice|elsa|chiara|federica|fiona|female|google/i))) || voci.find(v => v.lang.startsWith('it'));
+    if (target) {
+        voceScelta = target;
+        infoVoce.innerText = "Voce attiva: " + target.name;
+    }
+    return target;
+  }
+
+  if (typeof window.speechSynthesis !== 'undefined') {
+    window.speechSynthesis.onvoiceschanged = selezionaVoce;
+    selezionaVoce();
+  }
+
+  function parla(testo) {
+    if (typeof window.speechSynthesis === 'undefined') return;
+    
+    window.speechSynthesis.cancel(); 
+    
+    const msg = new SpeechSynthesisUtterance(testo);
+    msg.lang = 'it-IT';
+    msg.rate = 0.95; // Velocità leggermente più naturale
+    msg.pitch = 1.15; // Tonalità ottimale
+    
+    const v = selezionaVoce();
+    if (v) msg.voice = v;
+    
+    // TRICK FONDAMENTALE PER CHROME: Salva l'oggetto globalmente per evitare che il Garbage Collector lo distrugga a metà frase
+    window.currentUtterance = msg;
+    
+    window.speechSynthesis.speak(msg);
+  }
+
+  function attivaLetturaTripla() {
+    if (!testoCorrente) return;
+    
+    // Cancella eventuali cicli di lettura rimasti attivi da clic precedenti
+    letturaTimers.forEach(t => clearTimeout(t));
+    letturaTimers = [];
+    
+    // Mostra il testo ad effetto arcobaleno
+    testoCentroBox.innerHTML = `<span class="testo-arcobaleno-reale">${testoCorrente}</span>`;
+    
+    // Prima lettura immediata (richiesta dall'interazione utente di Chrome/Safari)
+    parla(testoCorrente);
+    
+    // Seconda lettura dopo 3.8 secondi
+    let t1 = setTimeout(() => { parla(testoCorrente); }, 3800);
+    letturaTimers.push(t1);
+    
+    // Terza lettura dopo 7.6 secondi
+    let t2 = setTimeout(() => { parla(testoCorrente); }, 7600);
+    letturaTimers.push(t2);
+    
+    // Scomparsa del testo dopo la fine dell'intero ciclo (11.5 secondi)
+    let t3 = setTimeout(() => { testoCentroBox.innerHTML = ""; }, 11500);
+    letturaTimers.push(t3);
+  }
+
+  function updateData() {
+    const now = new Date();
+    const hour = now.getHours();
+    document.getElementById('orario-grande').innerText = now.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'});
+    document.getElementById('data-estesa').innerText = now.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+    
+    if (hour >= 10 && hour < 14) { 
+        testoCorrente = "Oggi sono felice, ho fatto tutto."; 
+    } else if (hour >= 14 && hour < 19) { 
+        testoCorrente = "Fantasy Music vi augura un buon pomeriggio."; 
+    } else { 
+        testoCorrente = "Benvenuti nella radio che fa la differenza."; 
+    }
+  }
+
+  // Risolve i ritardi di caricamento delle liste voci su Chrome Mobile e Desktop
+  setTimeout(selezionaVoce, 300);
+  setTimeout(selezionaVoce, 800);
+  setTimeout(selezionaVoce, 1500);
+
+  updateData();
+  setInterval(updateData, 1000);
+</script>
+</body>
+</html>
