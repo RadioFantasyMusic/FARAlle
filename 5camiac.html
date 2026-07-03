@@ -1,0 +1,77 @@
+<html lang="pt-PT"><head>
+<title>fmusic:</title>
+<meta name="description" content="FM">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta property="og:title" content="FMPlayer">
+<meta property="og:description" content="FM">
+<link rel="icon" type="image/png" href="https://i.imgur.com/YTsSEle.png" sizes="48x48">
+    <style type="text/css">
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; align-items: flex-start; padding-top: 60px; background: #000 url('https://xatimg.com/image/4Orh2aPiofbl.png') center/cover no-repeat; font-family: 'Segoe UI', Roboto, sans-serif; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0, 255, 0, 0.3) 0%, rgba(255, 255, 0, 0.2) 100%); z-index: 1; pointer-events: none; transition: 1.5s ease-in-out; }
+        .main-scaler { transform: scale(min(1, calc(100vw / 1700), calc(100vh / 950))); transform-origin: top center; display: flex; justify-content: center; align-items: center; z-index: 10; width: 1700px; }
+        .stage-area { position: relative; width: 728px; height: 486px; margin-top: 39px; }
+        .theme-nav { position: absolute; top: -35px; left: 0; width: 100%; display: flex; justify-content: space-between; z-index: 9999; padding: 0 5px; }
+        .theme-nav span { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; background: radial-gradient(circle at 35% 35%, #fff 0%, var(--c1) 40%, var(--c2) 100%); border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 5px 15px rgba(0,0,0,0.8), inset 0 -2px 5px rgba(0,0,0,0.5); transition: 0.3s; flex-shrink: 0; }
+        .dj-wrap { position: absolute; top: 45px; width: 160px; height: 340px; display: flex; align-items: center; justify-content: center; z-index: 20; padding-top: 90px; }
+        .left-dj { left: -210px; } .right-dj { right: -220px; }
+        .dj-wrap img { width: 280px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); transform: scaleY(1.15); animation: floatAnim 4s ease-in-out infinite; }
+        .left-dj img { margin-left: -40px; }
+        @keyframes floatAnim { 0%, 100% { transform: scaleY(1.15) translateY(0); } 50% { transform: scaleY(1.15) translateY(-10px); } }
+        .v-label { position: absolute; font-size: 3rem; white-space: nowrap; z-index: 30; text-transform: uppercase; font-weight: 900; letter-spacing: -2px; margin-top: -90px; }
+        .left-dj .v-label { transform: rotate(-90deg); left: -280px; } .right-dj .v-label { transform: rotate(90deg); right: -280px; }
+        .rainbow { background: linear-gradient(to right, #FF0000, #FF00FF, #0000FF, #00FFFF, #00FF00, #FFFF00, #FF0000); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow-anim 4s linear infinite; }
+        @keyframes rainbow-anim { to { background-position: 200% center; } }
+        .footer-text { position: absolute; bottom: -90px; width: 1200px; left: 50%; transform: translateX(-50%); text-align: center; font-size: 2.3rem; font-weight: 900; text-shadow: 0 8px 30px rgba(0,0,0,1); }
+    </style>
+</head>
+<body oncontextmenu="return false;" onselectstart="return false;">
+
+    <div class="bg-overlay" id="overlay"></div>
+
+    <div class="main-scaler">
+        <div class="stage-area">
+            <div class="theme-nav">
+                <!-- (Mantenuto il tuo codice dei bottoni tema) -->
+            </div>
+
+            <div class="dj-wrap left-dj">
+                <div class="v-label rainbow">Fantasy Music</div>
+                <img id="left-gif" src="https://i.imgur.com/HYghl1Q.gif" alt="DJ Left">
+            </div>
+
+            <div class="dj-wrap right-dj">
+                <div class="v-label rainbow">Fantasy Music</div>
+                <img id="right-gif" src="https://i.imgur.com/0RrCnWy.gif" alt="DJ Right">
+            </div>
+
+            <div class="footer-text rainbow">Fantasy MusicÉ Qui...</div>
+        </div>
+    </div>
+
+    <script>
+        function applyTheme(topColor, bottomColor) {
+            document.getElementById('overlay').style.background = `linear-gradient(to bottom, ${topColor} 0%, ${bottomColor} 100%)`;
+        }
+
+        function updateGifs() {
+            const hour = new Date().getHours();
+            const index = hour % 4; // Cambia ogni ora, cicla su 4 gif
+
+            // Inserisci qui i tuoi 4 link per lato
+            const leftGifs = ["https://i.imgur.com/9eQW73g.gif", "https://i.imgur.com/MonfzkV.gif", "https://i.imgur.com/N9kFpnB.gif", "https://i.imgur.com/q2TTm9w.gif"];
+            const rightGifs = ["https://i.imgur.com/xjPtDVR.gif", "https://i.imgur.com/osTrEP4.gif", "https://i.imgur.com/VWV3idu.gif", "https://i.imgur.com/fNgddMq.gif"];
+
+            document.getElementById('left-gif').src = leftGifs[index];
+            document.getElementById('right-gif').src = rightGifs[index];
+        }
+
+        // Avvia al caricamento e controlla ogni ora
+        updateGifs();
+        setInterval(updateGifs, 3600000); 
+
+        document.oncontextmenu = function(){ alert("©arlos Copyright"); return false; };
+    </script>
+</body></html>
