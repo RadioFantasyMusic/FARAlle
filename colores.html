@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barra Colores Xat Style</title>
+    <style>
+        /* Stile del box principale */
+        .colores-bar {
+            display: inline-flex;
+            align-items: center;
+            background-color: #111;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: Arial, sans-serif;
+            color: white;
+            font-size: 14px;
+            gap: 10px;
+        }
+
+        /* Etichetta "Colores:" */
+        .colores-label {
+            font-weight: bold;
+        }
+
+        /* Contenitore dei cerchi colorati */
+        .color-circles {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stile dei singoli cerchi */
+        .circle {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Cerchio con bordo di selezione bianco */
+        .circle.selected {
+            border-color: #ffffff;
+            box-shadow: 0 0 5px #ffffff;
+        }
+
+        /* Esempi di colori basati sull'immagine */
+        .c-blue { background: linear-gradient(135deg, #0055ff, #00aaff); }
+        .c-pink { background: linear-gradient(135deg, #ff0055, #aa00ff); }
+        .c-red { background: linear-gradient(135deg, #ff0000, #ff7700); }
+        .c-green { background: linear-gradient(135deg, #00aa00, #00ffaa); }
+        .c-rainbow { background: linear-gradient(135deg, red, yellow, green, blue, violet); }
+
+        /* Pulsante o logo finale tipo xat.com */
+        .xat-badge {
+            background-color: #333;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #ddd;
+            text-decoration: none;
+            border: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Struttura della barra Colores -->
+    <div class="colores-bar">
+        <span class="colores-label">Colores:</span>
+        <div class="color-circles">
+            <div class="circle c-blue selected"></div>
+            <div class="circle c-pink"></div>
+            <div class="circle c-red"></div>
+            <div class="circle c-green"></div>
+            <div class="circle c-rainbow"></div>
+        </div>
+        <a href="#" class="xat-badge">Xat.com</a>
+    </div>
+
+</body>
+</html>
